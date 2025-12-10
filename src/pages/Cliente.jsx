@@ -10,7 +10,7 @@ export default function Cliente() {
   const [services, setServices] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(localStorage.getItem("clientPhone") || "");
   const [selectedService, setSelectedService] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
@@ -34,7 +34,7 @@ export default function Cliente() {
 
   const serviceOrder = ["corte_ter_qua", "corte_sex_sab", "barba_tradicional", "cabelo_barba", "platinado"];
 
-  // Escuta serviços e agendamentos em tempo real
+  // Escuta serviços em tempo real
   useEffect(() => {
     const servicesRef = ref(database, "services");
     onValue(servicesRef, snapshot => {
@@ -46,19 +46,33 @@ export default function Cliente() {
         : defaultServices;
       setServices(orderedServices);
     });
+  }, []);
+
+  // Escuta agendamentos do cliente em tempo real
+  useEffect(() => {
+    if (!phone) return;
 
     const appointmentsRef = ref(database, "appointments");
-    onValue(appointmentsRef, snapshot => {
+    const unsubscribe = onValue(appointmentsRef, snapshot => {
       const data = snapshot.val();
-      setAppointments(data ? Object.entries(data).map(([key, value]) => ({ key, ...value })) : []);
+      const filtered = data
+        ? Object.entries(data)
+            .map(([key, value]) => ({ key, ...value }))
+            .filter(a => a.phone === phone) // filtra apenas os agendamentos do telefone
+        : [];
+      setAppointments(filtered);
     });
-  }, []);
+
+    return () => unsubscribe();
+  }, [phone]);
 
   const handleSubmit = () => {
     if (!name || !phone || !selectedService || !selectedDate || !selectedTime) {
       alert("❌ Preencha todos os campos!");
       return;
     }
+
+    localStorage.setItem("clientPhone", phone);
 
     const serviceObj = services.find(s => s.key === selectedService);
     const serviceName = serviceObj?.name || "";
@@ -82,9 +96,7 @@ export default function Cliente() {
     })
       .then(() => {
         alert("✅ Agendamento feito com sucesso!");
-        // Limpa os campos
         setName("");
-        setPhone("");
         setSelectedService("");
         setSelectedDate("");
         setSelectedTime("");
@@ -98,10 +110,11 @@ export default function Cliente() {
     }
   };
 
-  // Mostra todos os agendamentos do número de telefone preenchido ou todos se vazio
-  const clientAppointments = phone
-    ? appointments.filter(a => a.phone === phone)
-    : appointments;
+  const handleChangePhone = () => {
+    localStorage.removeItem("clientPhone");
+    setPhone("");
+    setAppointments([]);
+  };
 
   return (
     <div style={styles.container}>
@@ -112,7 +125,16 @@ export default function Cliente() {
         <input type="text" value={name} onChange={e => setName(e.target.value)} style={styles.input} />
 
         <label>Telefone:</label>
-        <input type="text" value={phone} onChange={e => setPhone(e.target.value)} style={styles.input} />
+        <input
+          type="text"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          style={styles.input}
+          disabled={!!localStorage.getItem("clientPhone")}
+        />
+        {!!localStorage.getItem("clientPhone") && (
+          <button onClick={handleChangePhone} style={{ marginTop: 6, padding: 6, fontSize: 14 }}>Trocar telefone</button>
+        )}
 
         <label>Serviço:</label>
         <select value={selectedService} onChange={e => setSelectedService(e.target.value)} style={styles.input}>
@@ -143,11 +165,11 @@ export default function Cliente() {
         <button onClick={handleSubmit} style={styles.saveButton}>Agendar</button>
       </div>
 
-      {clientAppointments.length > 0 && (
+      {appointments.length > 0 && (
         <>
           <h2>Seus Agendamentos</h2>
           <div style={styles.card}>
-            {clientAppointments.map(a => {
+            {appointments.map(a => {
               const [year, month, day] = a.date.split("-");
               const formattedDate = `${day}-${month}-${year}`;
               return (
