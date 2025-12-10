@@ -1,0 +1,12 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0a1a2a;
+  color: white;
+}
+button {
+  cursor: pointer;
+}
+input {
+  outline: none;
+}
