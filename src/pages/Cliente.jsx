@@ -1,4 +1,3 @@
-// src/pages/Cliente.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ref, onValue, push, remove } from "firebase/database";
@@ -9,13 +8,15 @@ export default function Cliente() {
 
   const [services, setServices] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [allAppointments, setAllAppointments] = useState([]);
+
   const [name, setName] = useState("");
   const [phone, setPhone] = useState(localStorage.getItem("clientPhone") || "");
   const [selectedService, setSelectedService] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
 
-  // Horários de 10:00 até 20:00 de 45 em 45 minutos
+  // 🔹 Horários (10:00 até 20:00)
   const times = [];
   for (let h = 10; h <= 19; h++) {
     for (let m of [0, 45]) {
@@ -32,9 +33,15 @@ export default function Cliente() {
     { key: "platinado", name: "Platinado", price: 120 },
   ];
 
-  const serviceOrder = ["corte_ter_qua", "corte_sex_sab", "barba_tradicional", "cabelo_barba", "platinado"];
+  const serviceOrder = [
+    "corte_ter_qua",
+    "corte_sex_sab",
+    "barba_tradicional",
+    "cabelo_barba",
+    "platinado",
+  ];
 
-  // Escuta serviços em tempo real
+  // 🔹 Serviços
   useEffect(() => {
     const servicesRef = ref(database, "services");
     onValue(servicesRef, snapshot => {
@@ -48,7 +55,20 @@ export default function Cliente() {
     });
   }, []);
 
-  // Escuta agendamentos do cliente em tempo real
+  // 🔹 TODOS os agendamentos (controle global)
+  useEffect(() => {
+    const appointmentsRef = ref(database, "appointments");
+    const unsubscribe = onValue(appointmentsRef, snapshot => {
+      const data = snapshot.val();
+      const all = data
+        ? Object.entries(data).map(([key, value]) => ({ key, ...value }))
+        : [];
+      setAllAppointments(all);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 🔹 Agendamentos do cliente
   useEffect(() => {
     if (!phone) return;
 
@@ -58,17 +78,31 @@ export default function Cliente() {
       const filtered = data
         ? Object.entries(data)
             .map(([key, value]) => ({ key, ...value }))
-            .filter(a => a.phone === phone) // filtra apenas os agendamentos do telefone
+            .filter(a => a.phone === phone)
         : [];
       setAppointments(filtered);
     });
-
     return () => unsubscribe();
   }, [phone]);
+
+  // 🔹 Data e hora atual
+  const now = new Date();
+  const today = now.toLocaleDateString("sv-SE"); // yyyy-mm-dd
+  const currentTime = now.toTimeString().slice(0, 5); // HH:mm
 
   const handleSubmit = () => {
     if (!name || !phone || !selectedService || !selectedDate || !selectedTime) {
       alert("❌ Preencha todos os campos!");
+      return;
+    }
+
+    if (selectedDate < today) {
+      alert("⛔ Não é possível agendar em datas passadas.");
+      return;
+    }
+
+    if (selectedDate === today && selectedTime <= currentTime) {
+      alert("⛔ Este horário já passou.");
       return;
     }
 
@@ -78,9 +112,15 @@ export default function Cliente() {
     const serviceName = serviceObj?.name || "";
     const servicePrice = serviceObj?.price || 0;
 
-    const isOccupied = appointments.some(a => a.date === selectedDate && a.time === selectedTime);
+    const isOccupied = allAppointments.some(
+      a =>
+        a.date === selectedDate &&
+        a.time === selectedTime &&
+        a.status !== "cancelado"
+    );
+
     if (isOccupied) {
-      alert("⛔ Horário já está ocupado. Escolha outro.");
+      alert("⛔ Horário já está ocupado.");
       return;
     }
 
@@ -92,7 +132,8 @@ export default function Cliente() {
       servicePrice,
       date: selectedDate,
       time: selectedTime,
-      status: "agendado"
+      status: "agendado",
+      createdAt: Date.now(),
     })
       .then(() => {
         alert("✅ Agendamento feito com sucesso!");
@@ -133,7 +174,9 @@ export default function Cliente() {
           disabled={!!localStorage.getItem("clientPhone")}
         />
         {!!localStorage.getItem("clientPhone") && (
-          <button onClick={handleChangePhone} style={{ marginTop: 6, padding: 6, fontSize: 14 }}>Trocar telefone</button>
+          <button onClick={handleChangePhone} style={{ marginTop: 6, padding: 6, fontSize: 14 }}>
+            Trocar telefone
+          </button>
         )}
 
         <label>Serviço:</label>
@@ -147,16 +190,35 @@ export default function Cliente() {
         </select>
 
         <label>Data:</label>
-        <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} style={styles.input} />
+        <input
+          type="date"
+          value={selectedDate}
+          min={today}
+          onChange={e => setSelectedDate(e.target.value)}
+          style={styles.input}
+        />
 
         <label>Horário:</label>
         <select value={selectedTime} onChange={e => setSelectedTime(e.target.value)} style={styles.input}>
           <option value="">Selecione o horário</option>
           {times.map((t, i) => {
-            const isDisabled = appointments.some(a => a.date === selectedDate && a.time === t);
+            const isPast =
+              selectedDate === today && t <= currentTime;
+
+            const isOccupied = allAppointments.some(
+              a =>
+                a.date === selectedDate &&
+                a.time === t &&
+                a.status !== "cancelado"
+            );
+
+            const disabled = isPast || isOccupied;
+
             return (
-              <option key={i} value={t} disabled={isDisabled}>
-                {t} {isDisabled ? "(Ocupado)" : ""}
+              <option key={i} value={t} disabled={disabled}>
+                {t}
+                {isPast ? " (Horário passado)" : ""}
+                {isOccupied ? " (Ocupado)" : ""}
               </option>
             );
           })}
@@ -208,3 +270,4 @@ const styles = {
   time: { marginBottom: 4 },
   clientName: { fontWeight: "bold", fontSize: 16 },
 };
+
