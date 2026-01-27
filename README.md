@@ -1,6 +1,22 @@
 # 💈 Barbearia PWA
 
+
+## 📸 Screenshots
+
+### Tela inicial
+![Tela inicial](screenshots/tela-inicial.png)
+
+### Agendamento do cliente
+![Agendamento do cliente](screenshots/agendamento-cliente.png)
+
+### Painel do barbeiro
+![Painel do barbeiro](screenshots/painel-barbeiro.png)
+
+### Atualização de preços
+![Atualização de preços](screenshots/atualizar-precos.png)
+
 Aplicação **PWA (Progressive Web App)** desenvolvida para **agendamento de barbearia**, permitindo que clientes escolham **data e horário disponíveis**, com **bloqueio automático de horários ocupados e passados**.
+
 
 O projeto foi criado com foco em **aprendizado prático**, simulando um sistema real utilizado no dia a dia de barbearias.
 
