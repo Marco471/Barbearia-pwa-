@@ -4,16 +4,20 @@
 ## 📸 Screenshots
 
 ### Tela inicial
-![Tela inicial](screenshots/tela-inicial.png)
+<img src="screenshots/tela-inicial.png" alt="Tela inicial" width="600">
+
 
 ### Agendamento do cliente
-![Agendamento do cliente](screenshots/agendamento-cliente.png)
+<img src="screenshots/agendamento-cliente.png" alt="Agendamento do cliente" width="600">
+
 
 ### Painel do barbeiro
-![Painel do barbeiro](screenshots/painel-barbeiro.png)
+<img src="screenshots/painel-barbeiro.png" alt="Painel do barbeiro" width="600">
+
 
 ### Atualização de preços
-![Atualização de preços](screenshots/atualizar-precos.png)
+<img src="screenshots/atualizar-precos.png" alt="Atualização de preços" width="600">
+
 
 Aplicação **PWA (Progressive Web App)** desenvolvida para **agendamento de barbearia**, permitindo que clientes escolham **data e horário disponíveis**, com **bloqueio automático de horários ocupados e passados**.
 
