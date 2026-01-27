@@ -1,16 +1,76 @@
-# React + Vite
+# 💈 Barbearia PWA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação **PWA (Progressive Web App)** desenvolvida para **agendamento de barbearia**, permitindo que clientes escolham **data e horário disponíveis**, com **bloqueio automático de horários ocupados e passados**.
 
-Currently, two official plugins are available:
+O projeto foi criado com foco em **aprendizado prático**, simulando um sistema real utilizado no dia a dia de barbearias.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+## 🚀 Funcionalidades
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- 📅 Agendamento de horários  
+- ⛔ Bloqueio de horários já ocupados  
+- ⏰ Bloqueio de horários passados  
+- 📱 Funcionamento como **PWA** (instalável no celular)  
+- 🔄 Atualização automática do PWA  
+- ⚡ Interface rápida e moderna com React + Vite  
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tecnologias Utilizadas
+
+- **React**
+- **Vite**
+- **JavaScript**
+- **PWA (Service Worker)**
+- **CSS**
+- **ESLint**
+
+---
+
+## 📂 Estrutura do Projeto
+
+```bash
+Barbearia-pwa-
+├── public
+├── src
+│   ├── components
+│   ├── pages
+│   ├── services
+│   └── Cliente.jsx
+├── scripts
+├── index.html
+├── package.json
+├── vite.config.js
+└── README.md
+```
+---
+## ▶️ Como rodar o projeto
+
+### 1️⃣ Clonar o repositório
+```bash
+git clone https://github.com/Marco471/Barbearia-pwa-.git
+```
+### 2️⃣ Entrar na pasta do projeto
+```bash
+cd Barbearia-pwa-
+```
+### 3️⃣ Instalar as dependências
+```bash
+npm install
+```
+### 4️⃣ Rodar o projeto
+```bash
+npm run dev
+```
+---
+
+## 📱 PWA
+
+- Pode ser instalado no celular ou computador  
+- Funciona offline (dependendo do cache do navegador)  
+- Atualização automática configurada  
+
+
+
+
