@@ -12,7 +12,6 @@
 
 
 ### Painel do barbeiro
-### Painel do barbeiro
 <img src="screenshots/painel do barbeiro.jpeg" alt="Painel do barbeiro" width="600">
 
 
