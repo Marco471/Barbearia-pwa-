@@ -12,7 +12,8 @@
 
 
 ### Painel do barbeiro
-<img src="screenshots/painel-barbeiro.png" alt="Painel do barbeiro" width="600">
+### Painel do barbeiro
+<img src="screenshots/painel do barbeiro.jpeg" alt="Painel do barbeiro" width="600">
 
 
 ### Atualização de preços
