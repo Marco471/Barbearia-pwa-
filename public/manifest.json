@@ -1,6 +1,6 @@
 {
-  "name": "Barbearia PWA",
-  "short_name": "Barbearia",
+  "name": "Barbearia Digital",
+"short_name": "Barbearia Digital",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a1a2a",
